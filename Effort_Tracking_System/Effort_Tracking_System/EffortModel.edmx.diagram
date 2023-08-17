@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="a6770de55bfe461fa790e68a34833351" Name="Diagram1">
+        <EntityTypeShape EntityType="Effort_Tracking_SystemModel.admin" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Effort_Tracking_SystemModel.effort" Width="1.5" PointX="5.25" PointY="5.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="Effort_Tracking_SystemModel.project" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Effort_Tracking_SystemModel.shift" Width="1.5" PointX="3" PointY="3.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Effort_Tracking_SystemModel.task" Width="1.5" PointX="3" PointY="7.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Effort_Tracking_SystemModel.unavailability" Width="1.5" PointX="5.25" PointY="9.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Effort_Tracking_SystemModel.user_task_assignment" Width="1.5" PointX="8.25" PointY="5.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Effort_Tracking_SystemModel.user" Width="1.5" PointX="3" PointY="11" IsExpanded="true" />
+        <AssociationConnector Association="Effort_Tracking_SystemModel.FK__effort__project___5535A963" ManuallyRouted="false" />
+        <AssociationConnector Association="Effort_Tracking_SystemModel.FK__effort__shift_id__571DF1D5" ManuallyRouted="false" />
+        <AssociationConnector Association="Effort_Tracking_SystemModel.FK__effort__task_id__5629CD9C" ManuallyRouted="false" />
+        <AssociationConnector Association="Effort_Tracking_SystemModel.FK__effort__user_id__5441852A" ManuallyRouted="false" />
+        <AssociationConnector Association="Effort_Tracking_SystemModel.FK__task__project_id__4F7CD00D" ManuallyRouted="false" />
+        <AssociationConnector Association="Effort_Tracking_SystemModel.FK__user_task__proje__5EBF139D" ManuallyRouted="false" />
+        <AssociationConnector Association="Effort_Tracking_SystemModel.FK__unavailab__shift__5AEE82B9" ManuallyRouted="false" />
+        <AssociationConnector Association="Effort_Tracking_SystemModel.FK__user_task__shift__60A75C0F" ManuallyRouted="false" />
+        <AssociationConnector Association="Effort_Tracking_SystemModel.FK__user_task__task___5FB337D6" ManuallyRouted="false" />
+        <AssociationConnector Association="Effort_Tracking_SystemModel.FK__unavailab__user___59FA5E80" ManuallyRouted="false" />
+        <AssociationConnector Association="Effort_Tracking_SystemModel.FK__user_task__user___5DCAEF64" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -1,0 +1,322 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<div class="container1 mt-5">
+    <div class="row text-center">
+        <div class="col-md-3 mb-4">
+            <a href="#" class="text-decoration-none text-reset" data-bs-toggle="modal" data-bs-target="#createModal">
+                <div class="card card-hover h-100">
+                    <div class="card-body">
+                        <p class="card-text">Create/Update User</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 mb-4">
+            <a href="#" class="text-decoration-none text-reset" data-bs-toggle="modal" data-bs-target="#assignModal">
+                <div class="card card-hover h-100">
+                    <div class="card-body">
+                        <p class="card-text">Assign Project, Task, and Shifts</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 mb-4">
+            <a href="#" class="text-decoration-none text-reset" data-bs-toggle="modal" data-bs-target="#approveEffortsModal">
+                <div class="card card-hover h-100">
+                    <div class="card-body">
+                        <p class="card-text">Approve Efforts</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 mb-4">
+            <a href="#" class="text-decoration-none text-reset" data-bs-toggle="modal" data-bs-target="#approveTimeOffsModal">
+                <div class="card card-hover h-100">
+                    <div class="card-body">
+                        <p class="card-text">Approve Time Offs</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Create -->
+<div class="modal fade" id="createModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true" style="backdrop-filter: blur(5px);">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createUpdateModalLabel">Create/Update User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/admin/UserAction" method="post">
+                    <div class="container">
+                        <div class="row gx-3">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <input type="text" class="form-control form-control-sm" name="user_id" placeholder="user id" id="user-id-field">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <input type="text" class="form-control form-control-sm" name="first_name" placeholder="first name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <input type="text" class="form-control form-control-sm" name="last_name" placeholder="last name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <input type="text" class="form-control form-control-sm" name="designation" placeholder="designation" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <input type="text" class="form-control form-control-sm" name="email" placeholder="email" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <input type="text" class="form-control form-control-sm" name="password" placeholder="password" required>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-sm btn-success" name="action" value="create" onclick="disableUserIdField(true)">Create</button>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-sm btn-secondary" name="action" value="update" onclick="disableUserIdField(false)">Update</button>
+                                </div>
+                            </div>
+                            @*<div class="col-md-10">
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-sm btn-success">Create</button>
+                                    </div>
+                                </div>*@
+                            <div class="col-md-2">
+                                <div class="d-grid">
+                                    <a href="#" class="btn btn-sm btn-primary" data-bs-dismiss="modal" aria-label="Close">Discard</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Assign Project, Task, and Shifts -->
+<div class="modal fade" id="assignModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="assignModalLabel" aria-hidden="true" style="backdrop-filter: blur(5px);">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="assignModalLabel">Assign Task</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/admin/AddTasks" method="post">
+                    <div class="container">
+                        <div class="row gx-3">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <select class="form-select form-select-sm" name="user_id" aria-label="users" required>
+                                        <option selected>Select User</option>
+                                        @foreach (var item in ViewBag.Users)
+                                        {
+                                            <option value="@item.user_id">@item.first_name @item.last_name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <select class="form-select form-select-sm" name="project_id" aria-label="projects" required>
+                                        <option selected>Select Project</option>
+                                        @foreach (var item in ViewBag.Projects)
+                                        {
+                                            <option value="@item.project_id">@item.name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <select class="form-select form-select-sm" name="task_id" aria-label="tasks" required>
+                                        <option selected>Select task</option>
+                                        @foreach (var item in ViewBag.Tasks)
+                                        {
+                                            <option value="@item.task_id">@item.task_name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <select class="form-select form-select-sm" name="shift_id" aria-label="shifts" required>
+                                        <option selected>Select shift</option>
+                                        @foreach (var item in ViewBag.shifts)
+                                        {
+                                            <option value="@item.shift_id">@item.start_time-@item.end_time</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <input type="text" class="form-control form-control-sm" name="hours" placeholder="hours" required>
+                                </div>
+                            </div>
+                            <div class="col-md-10">
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-sm btn-success">Assign</button>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="d-grid">
+                                    <a href="#" class="btn btn-sm btn-primary" data-bs-dismiss="modal" aria-label="Close">Discard</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Approve Efforts -->
+<div class="modal fade" id="approveEffortsModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="approveEffortsModalLabel" aria-hidden="true" style="backdrop-filter: blur(5px);">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="approveEffortsModalLabel">Approve Efforts</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Project</th>
+                            <th>Task</th>
+                            <th>Shift</th>
+                            <th>Hours Worked</th>
+                            <th>Date Time</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var effort in ViewBag.Efforts)
+                        {
+                            <tr>
+                                <td>@effort.user.first_name @effort.user.last_name</td>
+                                <td>@effort.project.name</td>
+                                <td>@effort.task.task_name</td>
+                                <td>@effort.shift.start_time-@effort.shift.end_time</td>
+                                <td>@effort.hours_worked</td>
+                                <td>@effort.date_time</td>
+                                <td>
+                                    <form action="/admin/ApproveEffort" method="post">
+                                        <input type="hidden" name="effortId" value="@effort.effort_id">
+                                        <button type="submit" class="btn btn-primary">Approve</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal for Approve Time Offs -->
+<div class="modal fade" id="approveTimeOffsModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="approveTimeOffsModalLabel" aria-hidden="true" style="backdrop-filter: blur(5px);">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="approveTimeOffsModalLabel">Approve Time Offs</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Date</th>
+                            <th>Shift</th>
+                            <th>Reason</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var leave in ViewBag.Unavailability)
+                        {
+                            <tr>
+                                <td>@leave.user.first_name @leave.user.last_name</td>
+                                <td>@leave.date</td>
+                                <td>@leave.shift.start_time-@leave.shift.end_time</td>
+                                <td>@leave.reason</td>
+                                <td>
+                                    <form action="/admin/ApproveLeave" method="post">
+                                        <input type="hidden" name="unavailabilityid" value="@leave.unavailability_id">
+                                        <button type="submit" class="btn btn-primary">Approve</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    .container1 {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 80vh;
+    }
+
+    .card-hover {
+        transition: transform 0.2s;
+    }
+
+        .card-hover:hover {
+            transform: scale(1.05);
+            cursor: pointer;
+        }
+</style>
+
+<script>
+    function disableUserIdField(disabled) {
+        document.getElementById("user-id-field").disabled = disabled;
+    }
+</script>
+
+@if (!string.IsNullOrEmpty(ViewBag.SuccessMessage))
+{
+    <script>
+            alert("@ViewBag.SuccessMessage");
+    </script>
+
+}
+
+@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+{
+    <script>
+            alert("@ViewBag.ErrorMessage");
+    </script>
+}
