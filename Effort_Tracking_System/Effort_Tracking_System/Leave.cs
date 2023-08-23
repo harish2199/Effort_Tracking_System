@@ -11,17 +11,28 @@ namespace Effort_Tracking_System
 {
     using System;
     using System.Collections.Generic;
-    
-    public partial class unavailability
+    using System.ComponentModel.DataAnnotations;
+
+    public partial class Leave
     {
-        public int unavailability_id { get; set; }
+        public int leave_id { get; set; }
+        [Required(ErrorMessage = "User ID is required.")]
         public Nullable<int> user_id { get; set; }
+
+        [Required(ErrorMessage = "Date is required.")]
         public System.DateTime date { get; set; }
+
+        [Required(ErrorMessage = "Shift ID is required.")]
         public Nullable<int> shift_id { get; set; }
+
+        [Required(ErrorMessage = "Reason is required.")]
+        [StringLength(200, ErrorMessage = "Reason cannot exceed 200 characters.")]
         public string reason { get; set; }
+
+        [Required(ErrorMessage = "Status is required.")]
+        [StringLength(50, ErrorMessage = "Status cannot exceed 50 characters.")]
         public string status { get; set; }
-    
-        public virtual shift shift { get; set; }
-        public virtual user user { get; set; }
+        public virtual Shift Shift { get; set; }
+        public virtual User User { get; set; }
     }
 }

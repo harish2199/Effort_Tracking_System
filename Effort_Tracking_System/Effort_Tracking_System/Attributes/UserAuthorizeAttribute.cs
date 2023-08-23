@@ -6,13 +6,13 @@ using System.Web.Mvc;
 
 namespace Effort_Tracking_System.Attributes
 {
-    public class CustomAuthorizeAttribute : AuthorizeAttribute
+    public class UserAuthorizeAttribute : AuthorizeAttribute
     {
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
             // Check if the user's session is authenticated
             return httpContext.Session["UserId"] != null &&
-                   httpContext.Session["UserRole"].ToString() == "User";
+                   httpContext.Session["UserRole"].ToString().ToLower() == "user";
         }
 
         protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)

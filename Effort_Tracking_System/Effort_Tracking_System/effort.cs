@@ -11,21 +11,25 @@ namespace Effort_Tracking_System
 {
     using System;
     using System.Collections.Generic;
-    
-    public partial class effort
+    using System.ComponentModel.DataAnnotations;
+
+    public partial class Effort
     {
         public int effort_id { get; set; }
-        public Nullable<int> user_id { get; set; }
-        public Nullable<int> project_id { get; set; }
-        public Nullable<int> task_id { get; set; }
-        public Nullable<int> shift_id { get; set; }
+        [Required(ErrorMessage = "Assign Task ID is required.")]
+        public Nullable<int> assign_task_id { get; set; }
+
+        [Required(ErrorMessage = "Hours Worked is required.")]
+        [Range(0, int.MaxValue, ErrorMessage = "Hours worked must be a non-negative value.")]
         public int hours_worked { get; set; }
-        public System.DateTime date_time { get; set; }
+
+        [Required(ErrorMessage = "Date Time is required.")]
+        public Nullable<System.DateTime> date_time { get; set; }
+
+        [Required(ErrorMessage = "Status is required.")]
+        [StringLength(50, ErrorMessage = "Status cannot exceed 50 characters.")]
         public string status { get; set; }
-    
-        public virtual project project { get; set; }
-        public virtual shift shift { get; set; }
-        public virtual task task { get; set; }
-        public virtual user user { get; set; }
+
+        public virtual Assign_Task Assign_Task { get; set; }
     }
 }

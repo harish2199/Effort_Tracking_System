@@ -1,0 +1,113 @@
+﻿@model Effort_Tracking_System.User
+
+<head>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+
+@using (Html.BeginForm("UserAction", "Admin", FormMethod.Post))
+{
+    <div class="container">
+        <div class="row gx-3">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <select id="userDropdown" class="form-select form-select-sm" name="user_id" aria-label="users">
+                        <option selected>Select User</option>
+                        @if (ViewBag.Users != null)
+                        {
+                            foreach (var item in ViewBag.Users)
+                            {
+                                <option value="@item.user_id">@item.first_name @item.last_name</option>
+                            }
+                        }
+                    </select>
+                    @Html.ValidationMessageFor(model => model.user_id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    @Html.TextBoxFor(model => model.first_name, new { @class = "form-control form-control-sm", placeholder = "First Name" })
+                    @Html.ValidationMessageFor(model => model.first_name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    @Html.TextBoxFor(model => model.last_name, new { @class = "form-control form-control-sm", placeholder = "Last Name" })
+                    @Html.ValidationMessageFor(model => model.last_name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    @Html.TextBoxFor(model => model.designation, new { @class = "form-control form-control-sm", placeholder = "Designation" })
+                    @Html.ValidationMessageFor(model => model.designation, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    @Html.TextBoxFor(model => model.email, new { @class = "form-control form-control-sm", placeholder = "Email" })
+                    @Html.ValidationMessageFor(model => model.email, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    @Html.PasswordFor(model => model.password, new { @class = "form-control form-control-sm", placeholder = "Password" })
+                    @Html.ValidationMessageFor(model => model.password, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-10">
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-sm btn-secondary" name="action" value="update">Update</button>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="d-grid">
+                    <a href="#" class="btn btn-sm btn-primary" data-bs-dismiss="modal" aria-label="Close">Discard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+
+
+<script src="~/bundles/jquery"></script>
+<script src="~/bundles/bootstrap"></script>
+
+<script>
+   $(document).ready(function () {
+        $("#userDropdown").on("change", function () {
+            var selectedUserId = $(this).val();
+            var selectedUser = findUserById(selectedUserId);
+            if (selectedUser) {
+                populateFormFields(selectedUser);
+            } else {
+                clearFormFields();
+            }
+        });
+
+        // Simulated user data
+         var users = @Html.Raw(Json.Encode(ViewBag.UserDetails));
+
+
+        function findUserById(userId) {
+            return users.find(function (user) {
+                return user.user_id == userId;
+            });
+        }
+
+        function populateFormFields(userDetails) {
+            $("input[name='first_name']").val(userDetails.first_name);
+            $("input[name='last_name']").val(userDetails.last_name);
+            $("input[name='designation']").val(userDetails.designation);
+            $("input[name='email']").val(userDetails.email);
+            $("input[name='password']").val(userDetails.password);
+        }
+
+        function clearFormFields() {
+            $("input[name='first_name'], input[name='last_name'], input[name='designation'], input[name='email'], input[name='password']").val("");
+        }
+    });
+</script>

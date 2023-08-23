@@ -11,12 +11,16 @@ namespace Effort_Tracking_System
 {
     using System;
     using System.Collections.Generic;
-    
-    public partial class admin
+    using System.ComponentModel.DataAnnotations;
+
+    public partial class Admin
     {
         public int admin_id { get; set; }
         public string name { get; set; }
+        [Required(ErrorMessage = "Email is required.")]
+        [EmailAddress(ErrorMessage = "Invalid email format.")]
         public string email { get; set; }
+        [Required(ErrorMessage = "Password is required.")]
         public string password { get; set; }
         public string Role { get; set; }
     }

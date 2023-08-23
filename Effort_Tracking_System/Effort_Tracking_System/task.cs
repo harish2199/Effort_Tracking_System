@@ -12,23 +12,18 @@ namespace Effort_Tracking_System
     using System;
     using System.Collections.Generic;
     
-    public partial class task
+    public partial class Task
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public task()
+        public Task()
         {
-            this.efforts = new HashSet<effort>();
-            this.user_task_assignment = new HashSet<user_task_assignment>();
+            this.Assign_Task = new HashSet<Assign_Task>();
         }
     
         public int task_id { get; set; }
         public string task_name { get; set; }
-        public Nullable<int> project_id { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<effort> efforts { get; set; }
-        public virtual project project { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<user_task_assignment> user_task_assignment { get; set; }
+        public virtual ICollection<Assign_Task> Assign_Task { get; set; }
     }
 }

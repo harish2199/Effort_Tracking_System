@@ -1,59 +1,94 @@
 ﻿using Effort_Tracking_System.Attributes;
+using log4net;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using System.Net.Mail;
+using System.Net;
 using System.Web.Mvc;
 
 namespace Effort_Tracking_System.Controllers
 {
-    [CustomAuthorize]
+    [UserAuthorize]
     public class DashboardController : Controller
     {
-        Effort_Tracking_SystemEntities db = new Effort_Tracking_SystemEntities();
+        private static readonly ILog _log = LogManager.GetLogger(typeof(DashboardController));
+        private readonly Effort_Tracking_SystemEntities _dbContext = new Effort_Tracking_SystemEntities();
+
         public ActionResult Dashboard()
         {
-            int userid = (int)Session["UserId"];
-            var assignments = db.user_task_assignment
-              .Where(a => a.user_id == userid)
-              .Select(a => new
-              {
-                  a.project_id,
-                  a.project.name,
-                  a.task_id,
-                  a.task.task_name
-              })
-             .ToList();
-
-
-
-            ViewBag.Details = assignments;
-            ViewBag.Projects = db.projects.ToList();
-            return View();
-        }
-        public ActionResult GetTaskDetails(int taskId)
-        {
-            var assignment = db.user_task_assignment
-              .Where(a => a.task_id == taskId).FirstOrDefault();
-
-
-
-            if (assignment != null)
+            try
             {
-                var shift = db.shifts.Find(assignment.shift_id);
-
-
-
-                if (shift != null)
+                ViewBag.LoginSuccess = TempData["LoginSuccessMessage"] as string;
+                int? userId = Session["UserId"] as int?;
+                if (userId == null)
                 {
-                    return Json(new { shiftId = shift.shift_id, shiftName = shift.shift_name, hours = assignment.hours }, JsonRequestBehavior.AllowGet);
+                    TempData["ErrorMessage"] = "User session information is missing or invalid.";
+                    return RedirectToAction("Error", "Home");
                 }
-                else
+                // Checking if task completed or not
+                var assignedTask = _dbContext.Assign_Task
+                    .Where(a => a.user_id == userId && a.Status == "Pending")
+                    .OrderByDescending(a => a.assignmentdate)
+                    .FirstOrDefault();
+                if (assignedTask != null)
                 {
-                    return Json(new { shiftId = -1, hours = assignment.hours }, JsonRequestBehavior.AllowGet);
+                    int? totalHoursWorked = _dbContext.Efforts
+                        .Where(e => e.assign_task_id == assignedTask.assign_task_id && e.status == "Approved")
+                        .Sum(e => (int?)e.hours_worked);
+
+                    if (totalHoursWorked >= assignedTask.allocated_hours)
+                    {
+                        assignedTask.Status = "Completed";
+                        _dbContext.SaveChanges();
+                    }
                 }
+                
+                // Assigned Task
+                var task = _dbContext.Assign_Task
+                    .Where(a => a.user_id == userId && a.Status == "Pending")
+                    .OrderByDescending(a => a.assignmentdate)
+                    .FirstOrDefault();
+
+                // Completed efforts
+                ViewBag.PreviousReports = _dbContext.Efforts
+                    .Where(a => a.Assign_Task.user_id == userId && a.status == "Approved")
+                    .OrderByDescending(a => a.date_time)
+                    .Take(7)
+                    .ToList();
+                //_log.Info("Dashboard");
+                //SendEmailToAdmin(userId);
+                return View(task);
             }
-            return Json(new { shiftId = -1, hours = 0 }, JsonRequestBehavior.AllowGet);
+            catch (Exception ex)
+            {
+                _log.Error("An error occurred while loading data for the dashboard.", ex);
+                TempData["ErrorMessage"] = $"An error occurred while loading data for the dashboard. {ex}";
+                return RedirectToAction("Error", "Home");
+            }
         }
+
+        /*private void SendEmailToAdmin(int? userId)
+        {
+            // Configure SMTP client
+            SmtpClient smtpClient = new SmtpClient("smtp.gmail.com")
+            {
+                Port = 587,
+                Credentials = new NetworkCredential("harishdasu18@gmail.com", "Gmailpassword"),
+                EnableSsl = true
+            };
+
+            // Create email message
+            MailMessage mailMessage = new MailMessage
+            {
+                From = new MailAddress("harishdasu18@gmail.com"),
+                Subject = "New Effort Submission",
+                Body = $"A new effort has been submitted by user {userId}."
+            };
+
+            mailMessage.To.Add("satyaharish18@gmail.com"); // Replace with admin's email address
+
+            // Send the email
+            smtpClient.Send(mailMessage);
+        }*/
     }
 }

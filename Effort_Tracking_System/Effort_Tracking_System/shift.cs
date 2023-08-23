@@ -12,14 +12,13 @@ namespace Effort_Tracking_System
     using System;
     using System.Collections.Generic;
     
-    public partial class shift
+    public partial class Shift
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public shift()
+        public Shift()
         {
-            this.efforts = new HashSet<effort>();
-            this.unavailabilities = new HashSet<unavailability>();
-            this.user_task_assignment = new HashSet<user_task_assignment>();
+            this.Assign_Task = new HashSet<Assign_Task>();
+            this.Leaves = new HashSet<Leave>();
         }
     
         public int shift_id { get; set; }
@@ -28,10 +27,8 @@ namespace Effort_Tracking_System
         public System.TimeSpan end_time { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<effort> efforts { get; set; }
+        public virtual ICollection<Assign_Task> Assign_Task { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<unavailability> unavailabilities { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<user_task_assignment> user_task_assignment { get; set; }
+        public virtual ICollection<Leave> Leaves { get; set; }
     }
 }

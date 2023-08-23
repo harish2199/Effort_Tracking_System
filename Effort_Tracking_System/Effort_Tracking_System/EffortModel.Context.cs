@@ -25,13 +25,13 @@ namespace Effort_Tracking_System
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<admin> admins { get; set; }
-        public virtual DbSet<effort> efforts { get; set; }
-        public virtual DbSet<project> projects { get; set; }
-        public virtual DbSet<shift> shifts { get; set; }
-        public virtual DbSet<task> tasks { get; set; }
-        public virtual DbSet<unavailability> unavailabilities { get; set; }
-        public virtual DbSet<user_task_assignment> user_task_assignment { get; set; }
-        public virtual DbSet<user> users { get; set; }
+        public virtual DbSet<Admin> Admins { get; set; }
+        public virtual DbSet<Assign_Task> Assign_Task { get; set; }
+        public virtual DbSet<Effort> Efforts { get; set; }
+        public virtual DbSet<Leave> Leaves { get; set; }
+        public virtual DbSet<Project> Projects { get; set; }
+        public virtual DbSet<Shift> Shifts { get; set; }
+        public virtual DbSet<Task> Tasks { get; set; }
+        public virtual DbSet<User> Users { get; set; }
     }
 }

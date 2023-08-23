@@ -1,0 +1,94 @@
+﻿@model Effort_Tracking_System.Assign_Task
+
+<head>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<form action="/admin/AddTasks" method="post">
+    <div class="container">
+        <div class="row gx-3">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <select class="form-select form-select-sm" name="user_id" aria-label="users">
+                        <option selected>Select User</option>
+                        @if (ViewBag.Users != null)
+                        {
+                            foreach (var item in ViewBag.Users)
+                            {
+                                <option value="@item.user_id">@item.first_name @item.last_name</option>
+                            }
+                        }
+                    </select>
+                    @Html.ValidationMessageFor(model => model.user_id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <select class="form-select form-select-sm" name="project_id" aria-label="projects">
+                        <option selected>Select Project</option>
+                        @if (ViewBag.Projects != null)
+                        {
+                            foreach (var item in ViewBag.Projects)
+                            {
+                                <option value="@item.project_id">@item.name</option>
+                            }
+                        }
+                    </select>
+                    @Html.ValidationMessageFor(model => model.project_id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <select class="form-select form-select-sm" name="task_id" aria-label="tasks">
+                        <option selected>Select task</option>
+                        @if (ViewBag.Tasks != null)
+                        {
+                            foreach (var item in ViewBag.Tasks)
+                            {
+                                <option value="@item.task_id">@item.task_name</option>
+                            }
+                        }
+                    </select>
+                    @Html.ValidationMessageFor(model => model.task_id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <select class="form-select form-select-sm" name="shift_id" aria-label="shifts">
+                        <option selected>Select shift</option>
+                        @if (ViewBag.shifts != null)
+                        {
+                            foreach (var item in ViewBag.shifts)
+                            {
+                                <option value="@item.shift_id">@item.start_time-@item.end_time</option>
+                            }
+                        }
+                    </select>
+                    @Html.ValidationMessageFor(model => model.shift_id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <input type="text" class="form-control form-control-sm" name="allocated_hours" placeholder="Allocated hours">
+                    @Html.ValidationMessageFor(model => model.allocated_hours, "", new { @class = "text-danger" })
+
+                    <input type="hidden" name="assignmentdate" value="@DateTime.Now.ToString("yyyy-MM-dd")">
+                    <input type="hidden" name="Status" value="Pending">
+                </div>
+            </div>
+            <div class="col-md-10">
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-sm btn-success">Assign</button>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="d-grid">
+                    <a href="#" class="btn btn-sm btn-primary" data-bs-dismiss="modal" aria-label="Close">Discard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script src="~/bundles/jquery"></script>
+<script src="~/bundles/bootstrap"></script>

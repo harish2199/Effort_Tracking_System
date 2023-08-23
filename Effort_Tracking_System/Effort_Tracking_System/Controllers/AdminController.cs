@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI.WebControls;
 using Effort_Tracking_System.Attributes;
 using log4net;
 
@@ -11,147 +13,172 @@ namespace Effort_Tracking_System.Controllers
     [AdminAuthorize]
     public class AdminController : Controller
     {
-        private static readonly ILog log = LogManager.GetLogger(typeof(AdminController));
-        Effort_Tracking_SystemEntities db = new Effort_Tracking_SystemEntities();
+        private static readonly ILog _log = LogManager.GetLogger(typeof(AdminController));
+        private readonly Effort_Tracking_SystemEntities _dbContext = new Effort_Tracking_SystemEntities();
 
         public ActionResult Index()
         {
             try
             {
+                ViewBag.LoginSuccess = TempData["LoginSuccessMessage"] as string;
                 ViewBag.SuccessMessage = TempData["SuccessMessage"] as string;
                 ViewBag.ErrorMessage = TempData["ErrorMessage"] as string;
 
-                ViewBag.Users = db.users.ToList();
-                ViewBag.Projects = db.projects.ToList();
-                ViewBag.Tasks = db.tasks.ToList();
-                ViewBag.shifts = db.shifts.ToList();
-                ViewBag.Efforts = db.efforts.Where(e => e.status == "Completed").ToList();
-                ViewBag.Unavailability = db.unavailabilities.Where(e => e.status == "not approved").ToList();
+                ViewBag.Users = _dbContext.Users.ToList();
+                ViewBag.Projects = _dbContext.Projects.ToList();
+                ViewBag.Tasks = _dbContext.Tasks.ToList();
+                ViewBag.Shifts = _dbContext.Shifts.ToList();
+                ViewBag.Efforts = _dbContext.Efforts.Where(e => e.status == "Pending").ToList();
+                ViewBag.leaves = _dbContext.Leaves.Where(e => e.status == "Pending").ToList();
+                var users = _dbContext.Users;
+                var simplifiedUsers = users.Select(u => new
+                {
+                    u.user_id,
+                    u.first_name,
+                    u.last_name,
+                    u.designation,
+                    u.email,
+                    u.password
+                }).ToList();
+                ViewBag.UserDetails = simplifiedUsers;
+
                 return View();
             }
             catch (Exception ex)
             {
-                log.Error("An error occurred while loading data for the index page.", ex);
-                TempData["ErrorMessage"] = "An error occurred while loading data for the index page.";
+                _log.Error("An error occurred while loading data for the index page.", ex);
+                TempData["ErrorMessage"] = $"An error occurred while loading data for the index page. {ex}";
                 return RedirectToAction("Error", "Home");
             }
         }
 
         [HttpPost]
-        public ActionResult UserAction(user user, string action)
+        public ActionResult UserAction(User user, string action)
         {
             try
             {
-                if (ModelState.IsValid)
+                if (action == "create")
                 {
-                    if (action == "create")
+                    if (!ModelState.IsValid)
                     {
-                        if (!ModelState.IsValid)
-                        {
-                            return View();
-                        }
-                        var existingUser = db.users.FirstOrDefault(u => u.email == user.email);
-                        if (existingUser != null)
-                        {
-                            TempData["ErrorMessage"] = "user already exsists.";
-                            return RedirectToAction("index", "Admin");
-                        }
-                        db.users.Add(user);
-                        db.SaveChanges();
-                        TempData["SuccessMessage"] = "User created successfully.";
-                        return RedirectToAction("index", "Admin");
+                        return PartialView("~/Views/Partials/_CreateUserModal.cshtml", user);
                     }
-                    else if (action == "update")
+                    var existingUser = _dbContext.Users.FirstOrDefault(u => u.email == user.email);
+                    if (existingUser != null)
                     {
-                        var existingUser = db.users.Find(user.user_id);
-                        if (existingUser != null)
-                        {
-                            existingUser.first_name = user.first_name;
-                            existingUser.last_name = user.last_name;
-                            existingUser.designation = user.designation;
-                            existingUser.email = user.email;
-                            existingUser.password = user.password;
-                        }
-                        db.SaveChanges();
-                        TempData["SuccessMessage"] = "User updated successfully.";
-                        return RedirectToAction("index", "Admin");
+                        TempData["ErrorMessage"] = "User already exists.";
+                        return RedirectToAction("Index", "Admin");
                     }
+                    _dbContext.Users.Add(user);
+                    _dbContext.SaveChanges();
+                    TempData["SuccessMessage"] = "User created successfully.";
+                    return RedirectToAction("Index", "Admin");
                 }
-                return RedirectToAction("index", "Admin");
+                else if (action == "update")
+                {
+                    if (!ModelState.IsValid)
+                    {
+                        return PartialView("~/Views/Partials/_UpdateUserModal.cshtml", user);
+                    }
+                    var existingUser = _dbContext.Users.Find(user.user_id);
+                    if (existingUser != null)
+                    {
+                        existingUser.first_name = user.first_name;
+                        existingUser.last_name = user.last_name;
+                        existingUser.designation = user.designation;
+                        existingUser.email = user.email;
+                        existingUser.password = user.password;
+                    }
+                    _dbContext.SaveChanges();
+                    TempData["SuccessMessage"] = "User updated successfully.";
+                    return RedirectToAction("Index", "Admin");
+                }
+                return RedirectToAction("Index", "Admin");
             }
             catch (Exception ex)
             {
-                log.Error("An error occurred while creating or updating.", ex);
-                TempData["ErrorMessage"] = "An error occurred while creating or updating.";
+                _log.Error("An error occurred while creating or updating.", ex);
+                TempData["ErrorMessage"] = $"An error occurred while creating or updating. {ex}";
                 return RedirectToAction("Error", "Home");
             }
         }
 
         [HttpPost]
-        public ActionResult AddTasks(user_task_assignment task)
+        public ActionResult AddTasks(Assign_Task task)
         {
             try
             {
                 if (!ModelState.IsValid)
                 {
-                    return View();
+                    return PartialView("~/Views/Partials/_AssignTaskModel.cshtml", task);
                 }
 
-                db.user_task_assignment.Add(task);
-                db.SaveChanges();
+                var previousTask = _dbContext.Assign_Task.Where(t => t.user_id == task.user_id && t.Status == "Pending")
+                                                        .OrderByDescending(t => t.assignmentdate)
+                                                        .FirstOrDefault();
+                if (previousTask != null)
+                {
+                    TempData["ErrorMessage"] = "This user already assigned with one task.";
+                    return RedirectToAction("Index", "Admin");
+                }
+
+                _dbContext.Assign_Task.Add(task);
+                _dbContext.SaveChanges();
+
                 TempData["SuccessMessage"] = "Task added successfully.";
-                return RedirectToAction("index", "Admin");
+                return RedirectToAction("Index", "Admin");
             }
             catch (Exception ex)
             {
-                log.Error("An error occurred while adding a task.", ex);
-                TempData["ErrorMessage"] = "An error occurred while adding a task.";
+                _log.Error("An error occurred while adding a task.", ex);
+                TempData["ErrorMessage"] = $"An error occurred while adding a task. {ex}";
                 return RedirectToAction("Error", "Home");
             }
         }
 
         [HttpPost]
-        public ActionResult ApproveEffort(int effortId)
+        public ActionResult ApproveEffort(int effortid)
         {
             try
             {
-                var effortToUpdate = db.efforts.Find(effortId);
-                if (effortToUpdate != null && effortToUpdate.status == "Completed")
+                var effortToUpdate = _dbContext.Efforts.Find(effortid);
+                if (effortToUpdate != null)
                 {
                     effortToUpdate.status = "Approved";
-                    db.SaveChanges();
+                    _dbContext.SaveChanges();
+                    TempData["SuccessMessage"] = "Effort approved successfully.";
+                    return RedirectToAction("Index", "Admin");
                 }
-
-                TempData["SuccessMessage"] = "Effort approved successfully.";
-                return RedirectToAction("index", "Admin");
+                TempData["ErrorMessage"] = "An error occurred while approving an effort.";
+                return RedirectToAction("Index", "Admin");
             }
             catch (Exception ex)
             {
-                log.Error("An error occurred while approving an effort.", ex);
-                TempData["ErrorMessage"] = "An error occurred while approving an effort.";
+                _log.Error("An error occurred while approving an effort.", ex);
+                TempData["ErrorMessage"] = $"An error occurred while approving an effort.{ex}";
                 return RedirectToAction("Error", "Home");
             }
         }
 
         [HttpPost]
-        public ActionResult ApproveLeave(int unavailabilityid)
+        public ActionResult ApproveLeave(int leaveid, string action)
         {
             try
             {
-                var leave = db.unavailabilities.Find(unavailabilityid);
+                var leave = _dbContext.Leaves.Find(leaveid);
                 if (leave != null && leave.status == "Pending")
                 {
-                    leave.status = "Approved";
-                    db.SaveChanges();
+                    leave.status = action == "ApproveLeave" ? "Approved" : "Rejected";
+                    _dbContext.SaveChanges();
                 }
 
-                TempData["SuccessMessage"] = "Leave approved successfully.";
-                return RedirectToAction("index", "Admin");
+                TempData["SuccessMessage"] = "Leave " + (action == "ApproveLeave" ? "Approved" : "Rejected");
+                return RedirectToAction("Index", "Admin");
             }
             catch (Exception ex)
             {
-                log.Error("An error occurred while approving leave.", ex);
-                TempData["ErrorMessage"] = "An error occurred while approving leave.";
+                _log.Error("An error occurred while processing leave.", ex);
+                TempData["ErrorMessage"] = $"An error occurred while processing leave.{ex}";
                 return RedirectToAction("Error", "Home");
             }
         }

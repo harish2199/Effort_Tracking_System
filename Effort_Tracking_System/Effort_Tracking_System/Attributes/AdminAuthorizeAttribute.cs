@@ -11,7 +11,7 @@ namespace Effort_Tracking_System.Attributes
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
             return httpContext.Session["UserId"] != null &&
-                   httpContext.Session["UserRole"].ToString() == "Admin";
+                   httpContext.Session["UserRole"].ToString() == "admin";
         }
 
         protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)

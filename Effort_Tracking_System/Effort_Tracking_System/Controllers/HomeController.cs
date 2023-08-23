@@ -1,63 +1,78 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using log4net;
+using System;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace Effort_Tracking_System.Controllers
 {
     public class HomeController : Controller
     {
-        Effort_Tracking_SystemEntities db = new Effort_Tracking_SystemEntities();
+        private static readonly ILog _log = LogManager.GetLogger(typeof(HomeController));
+        private readonly Effort_Tracking_SystemEntities _dbContext = new Effort_Tracking_SystemEntities();
+
         public ActionResult Login()
         {
+            ViewBag.LoginFail = TempData["LoginFailureMessage"] as string;
             return View();
         }
 
-
         [HttpPost]
-        public ActionResult Login(user user)
+        public ActionResult Login(string email ,string password)
         {
-            var currentUser = db.users.FirstOrDefault(u => u.email == user.email && u.password == user.password);
-            var currentAdmin = db.admins.FirstOrDefault(a => a.email == user.email && a.password == user.password);
-
-            if (currentUser != null)
+            try
             {
-                Session["UserId"] = currentUser.user_id;
-                Session["UserName"] = currentUser.first_name + " " + currentUser.last_name;
-                Session["UserEmail"] = currentUser.email;
-                Session["UserRole"] = "User";
-                ViewBag.LoginStatusMessage = "Welcome, " + currentUser.first_name + " " + currentUser.last_name + "! You have successfully logged in.";
+                var currentUser = _dbContext.Users.FirstOrDefault(u => u.email == email && u.password == password);
+                var currentAdmin = _dbContext.Admins.FirstOrDefault(a => a.email == email && a.password == password);
 
-                return RedirectToAction("Dashboard", "Dashboard"); 
+                if (currentUser != null)
+                {
+                    Session["UserId"] = currentUser.user_id;
+                    Session["UserName"] = currentUser.first_name + " " + currentUser.last_name;
+                    Session["UserEmail"] = currentUser.email;
+                    Session["UserRole"] = "user";
+                    TempData["LoginSuccessMessage"] = "Welcome, " + currentUser.first_name + " " + currentUser.last_name + "! You have successfully logged in.";
+
+                    return RedirectToAction("Dashboard", "Dashboard");
+                }
+                else if (currentAdmin != null)
+                {
+                    Session["UserId"] = currentAdmin.admin_id;
+                    Session["UserName"] = currentAdmin.name;
+                    Session["UserEmail"] = currentAdmin.email;
+                    Session["UserRole"] = currentAdmin.Role.ToLower();
+                    TempData["LoginSuccessMessage"] = "Welcome, " + currentAdmin.name + "! You have successfully logged in.";
+
+                    return RedirectToAction("Index", "Admin");
+                }
+                else
+                {
+                    TempData["LoginFailureMessage"] = "Login failed. Please check your credentials.";
+                    return RedirectToAction("Login" , "Home");
+                }
             }
-            else if (currentAdmin != null)
+            catch (Exception ex)
             {
-                Session["UserId"] = currentAdmin.admin_id;
-                Session["UserName"] = currentAdmin.name;
-                Session["UserEmail"] = currentAdmin.email;
-                Session["UserRole"] = currentAdmin.Role;
-                ViewBag.LoginStatusMessage = "Welcome, " + currentAdmin.name + "! You have successfully logged in.";
-
-                return RedirectToAction("Index", "Admin");
-            }
-            else
-            {
-                ViewBag.LoginStatusMessage = "Login failed. Please check your credentials.";
+                _log.Error("An error occurred during login.", ex);
+                ViewBag.LoginStatusMessage = "An error occurred during login.";
                 return View("Login");
             }
         }
 
-
-
         [HttpPost]
         public ActionResult Logout()
         {
-            Session.Clear();
-
-            ViewBag.ErrorMessage = "You have been logged out.";
-
-            return View("Login");
+            try
+            {
+                Session.Clear();
+                ViewBag.SuccessMessage = "You have been logged out.";
+                return View("Login");
+            }
+            catch (Exception ex)
+            {
+                _log.Error("An error occurred during logout.", ex);
+                ViewBag.ErrorMessage = "An error occurred during logout.";
+                return View("Login");
+            }
         }
 
         public ActionResult Unauthorized()
@@ -70,6 +85,5 @@ namespace Effort_Tracking_System.Controllers
             ViewBag.ErrorMessage = TempData["ErrorMessage"];
             return View();
         }
-
     }
 }

@@ -1,27 +1,17 @@
-﻿<head>
+﻿@model Effort_Tracking_System.User
+<head>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
-
-    <style>
-       
-    </style>
-
-    @if (!string.IsNullOrEmpty(ViewBag.LoginStatusMessage))
-    {
-        <script>
-            window.onload = function() {
-                var loginStatusMessage = '@Html.Raw(Json.Encode(ViewBag.LoginStatusMessage))';
-                var alertType = '@Html.Raw(Json.Encode(ViewBag.LoginStatusMessage.Contains("failed") ? "danger" : "success"))';
-                if (alertType === 'danger') {
-                    alert(loginStatusMessage);
-                } else {
-                    alert(loginStatusMessage);
-                    window.location.href = '/home/Login'; 
-                }
-            }
-        </script>
-    }
 </head>
+
+@if (ViewBag.LoginFail != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Information: </strong> @ViewBag.LoginFail
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close">
+        </button>
+    </div>
+}
 
 <body>
     <div class="container">
@@ -32,11 +22,15 @@
                     <div class="card-body">
                         <form action="/home/Login" method="post">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="email" name="email" placeholder="John@gmail.com" autofocus required>
+                                <input type="text" class="form-control" id="email" name="email" placeholder="John@gmail.com" autofocus >
+                                @Html.ValidationMessageFor(model => model.email, "", new { @class = "text-danger" })
+
                                 <label for="email">Email</label>
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="password" class="form-control" id="pass_word" name="password" placeholder="******" required>
+                                <input type="password" class="form-control" id="pass_word" name="password" placeholder="******" >
+                                @Html.ValidationMessageFor(model => model.password, "", new { @class = "text-danger" })
+
                                 <label for="pass_word">Password</label>
                             </div>
                             <div class="d-grid">
@@ -56,4 +50,12 @@
     </div>
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+
+    <script>
+        window.setTimeout(function () {
+            $(".alert").fadeTo(500, 0).slideUp(500, function () {
+                $(this).remove();
+            });
+        }, 5000);
+    </script>
 </body>
