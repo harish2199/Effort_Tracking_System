@@ -20,15 +20,20 @@ namespace Effort_Tracking_System
         {
             this.Assign_Task = new HashSet<Assign_Task>();
             this.Leaves = new HashSet<Leave>();
+            this.Shift_Change = new HashSet<Shift_Change>();
         }
     
         public int user_id { get; set; }
         [Required(ErrorMessage = "First name is required.")]
+        [StringLength(50, ErrorMessage = "First name cannot exceed 50 characters.")]
         public string first_name { get; set; }
+
         [Required(ErrorMessage = "Last name is required.")]
+        [StringLength(50, ErrorMessage = "Last name cannot exceed 50 characters.")]
         public string last_name { get; set; }
 
         [Required(ErrorMessage = "Designation is required.")]
+        [StringLength(100, ErrorMessage = "Designation cannot exceed 100 characters.")]
         public string designation { get; set; }
 
         [Required(ErrorMessage = "Email is required.")]
@@ -36,12 +41,14 @@ namespace Effort_Tracking_System
         public string email { get; set; }
 
         [Required(ErrorMessage = "Password is required.")]
-        [MinLength(5, ErrorMessage = "Password must be at least 5 characters.")]
+        [StringLength(50, MinimumLength = 6, ErrorMessage = "Password must be at least 6 characters.")]
         public string password { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Assign_Task> Assign_Task { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Leave> Leaves { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Shift_Change> Shift_Change { get; set; }
     }
 }

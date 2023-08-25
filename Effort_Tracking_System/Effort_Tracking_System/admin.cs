@@ -16,12 +16,19 @@ namespace Effort_Tracking_System
     public partial class Admin
     {
         public int admin_id { get; set; }
+
+        [Required(ErrorMessage = "Name is required")]
         public string name { get; set; }
-        [Required(ErrorMessage = "Email is required.")]
-        [EmailAddress(ErrorMessage = "Invalid email format.")]
+
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email address")]
         public string email { get; set; }
-        [Required(ErrorMessage = "Password is required.")]
+
+        [Required(ErrorMessage = "Password is required")]
+        [MinLength(6, ErrorMessage = "Password must be at least 6 characters")]
         public string password { get; set; }
+
+        [Required(ErrorMessage = "Role is required")]
         public string Role { get; set; }
     }
 }

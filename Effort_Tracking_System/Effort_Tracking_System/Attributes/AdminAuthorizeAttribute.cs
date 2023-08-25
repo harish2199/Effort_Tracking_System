@@ -16,7 +16,7 @@ namespace Effort_Tracking_System.Attributes
 
         protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)
         {
-            filterContext.Result = new RedirectResult("~/Home/Unauthorized");
+            filterContext.Result = new RedirectResult("~/Home/Login");
         }
     }
 }

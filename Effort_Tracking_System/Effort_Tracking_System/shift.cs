@@ -18,7 +18,9 @@ namespace Effort_Tracking_System
         public Shift()
         {
             this.Assign_Task = new HashSet<Assign_Task>();
-            this.Leaves = new HashSet<Leave>();
+            this.Efforts = new HashSet<Effort>();
+            this.Shift_Change = new HashSet<Shift_Change>();
+            this.Shift_Change1 = new HashSet<Shift_Change>();
         }
     
         public int shift_id { get; set; }
@@ -29,6 +31,10 @@ namespace Effort_Tracking_System
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Assign_Task> Assign_Task { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Leave> Leaves { get; set; }
+        public virtual ICollection<Effort> Efforts { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Shift_Change> Shift_Change { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Shift_Change> Shift_Change1 { get; set; }
     }
 }

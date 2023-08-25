@@ -13,6 +13,7 @@ namespace Effort_Tracking_System.Controllers
         public ActionResult Login()
         {
             ViewBag.LoginFail = TempData["LoginFailureMessage"] as string;
+            ViewBag.SuccessMessage = TempData["SuccessMessage"] as string;
             return View();
         }
 
@@ -31,7 +32,6 @@ namespace Effort_Tracking_System.Controllers
                     Session["UserEmail"] = currentUser.email;
                     Session["UserRole"] = "user";
                     TempData["LoginSuccessMessage"] = "Welcome, " + currentUser.first_name + " " + currentUser.last_name + "! You have successfully logged in.";
-
                     return RedirectToAction("Dashboard", "Dashboard");
                 }
                 else if (currentAdmin != null)
@@ -41,7 +41,6 @@ namespace Effort_Tracking_System.Controllers
                     Session["UserEmail"] = currentAdmin.email;
                     Session["UserRole"] = currentAdmin.Role.ToLower();
                     TempData["LoginSuccessMessage"] = "Welcome, " + currentAdmin.name + "! You have successfully logged in.";
-
                     return RedirectToAction("Index", "Admin");
                 }
                 else
@@ -53,8 +52,8 @@ namespace Effort_Tracking_System.Controllers
             catch (Exception ex)
             {
                 _log.Error("An error occurred during login.", ex);
-                ViewBag.LoginStatusMessage = "An error occurred during login.";
-                return View("Login");
+                TempData["ErrorMessage"] = $"An error occurred while login {ex}";
+                return RedirectToAction("Error", "Home");
             }
         }
 
@@ -64,14 +63,14 @@ namespace Effort_Tracking_System.Controllers
             try
             {
                 Session.Clear();
-                ViewBag.SuccessMessage = "You have been logged out.";
-                return View("Login");
+                TempData["SuccessMessage"] = "You have been logged out.";
+                return RedirectToAction("Login");
             }
             catch (Exception ex)
             {
                 _log.Error("An error occurred during logout.", ex);
-                ViewBag.ErrorMessage = "An error occurred during logout.";
-                return View("Login");
+                TempData["ErrorMessage"] = $"An error occurred while logout. {ex}";
+                return RedirectToAction("Error", "Home");
             }
         }
 

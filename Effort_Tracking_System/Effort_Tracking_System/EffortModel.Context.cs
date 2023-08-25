@@ -30,6 +30,7 @@ namespace Effort_Tracking_System
         public virtual DbSet<Effort> Efforts { get; set; }
         public virtual DbSet<Leave> Leaves { get; set; }
         public virtual DbSet<Project> Projects { get; set; }
+        public virtual DbSet<Shift_Change> Shift_Change { get; set; }
         public virtual DbSet<Shift> Shifts { get; set; }
         public virtual DbSet<Task> Tasks { get; set; }
         public virtual DbSet<User> Users { get; set; }

@@ -30,7 +30,7 @@ namespace Effort_Tracking_System.Controllers
                     .OrderByDescending(a => a.assignmentdate)
                     .FirstOrDefault();
 
-                ViewBag.Shifts = _dbContext.Shifts.ToList();
+                ViewBag.TemporaryShifts = _dbContext.Shifts.ToList();
                 return View(latestTaskAssignment);
             }
             catch (Exception ex)
@@ -63,6 +63,38 @@ namespace Effort_Tracking_System.Controllers
                         return RedirectToAction("Index");
                     }
                 }
+                //Check for shift
+                var ShiftChange = _dbContext.Shift_Change.Where(a => a.user_id == userId && a.status == "Approved").ToList();
+                if (ShiftChange.Count > 0)
+                {
+                    foreach (var shiftChange in ShiftChange)
+                    {
+                        if (shiftChange.date == submittedEffort.date_time)
+                        {
+                            if (shiftChange.new_shift_id != submittedEffort.shift_id)
+                            {
+                                TempData["ErrorMessage"] = "You can only submit with assigned shift.";
+                                return RedirectToAction("Index");
+                            }
+                           
+                        }
+                    }
+                }
+                else
+                {
+                    var assignedTask = _dbContext.Assign_Task
+                    .Where(a => a.user_id == userId && a.Status == "Pending")
+                    .OrderByDescending(a => a.assignmentdate)
+                    .FirstOrDefault();
+                    if (assignedTask != null)
+                    {
+                        if (assignedTask.shift_id != submittedEffort.shift_id)
+                        {
+                            TempData["ErrorMessage"] = "You can only submit with assigned shift.";
+                            return RedirectToAction("Index");
+                        }
+                    }
+                }
 
                 //One effort per day
                 string targetDate = DateTime.Now.ToString("yyyy-MM-dd");
@@ -86,6 +118,48 @@ namespace Effort_Tracking_System.Controllers
                 return RedirectToAction("Index");
             }
         }
+        
+        [HttpPost]
+        public ActionResult SubmitShiftChange(Shift_Change Shift_Changes)
+        {
+            try
+            {
+                int userId = (int)Session["UserId"];
+                if (!ModelState.IsValid)
+                {
+                    return View("Index");
+                }
+
+                // Check same shift as the shift change request //submitted an effort today
+                var assignedTask = _dbContext.Assign_Task
+                    .FirstOrDefault(a => a.user_id == userId && a.Status == "Pending" && a.shift_id == Shift_Changes.new_shift_id);
+                if (assignedTask != null)
+                {
+                    TempData["ErrorMessage"] = "You cannot change as you are submitting same as assigned date.";
+                    return RedirectToAction("Index");
+                }
+
+                string targetDate = Shift_Changes.date.ToString("yyyy-MM-dd");
+                var effortperday = _dbContext.Efforts
+                    .Where(e => e.Assign_Task.user_id == userId && e.date_time.ToString() == targetDate)
+                    .ToList();
+                if (effortperday.Count() > 0)
+                {
+                    TempData["ErrorMessage"] = "You cannot submit for shift change today because you submitted an effort today.";
+                    return RedirectToAction("Index");
+                }
+
+                _dbContext.Shift_Change.Add(Shift_Changes);
+                _dbContext.SaveChanges();
+                TempData["SuccessMessage"] = "Shift change request submitted successfully.";
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error submitting shift change request: " + ex.Message;
+                return View();
+            }
+        }
 
         [HttpPost]
         public ActionResult SubmitLeave(Leave submittedLeave)
@@ -102,14 +176,14 @@ namespace Effort_Tracking_System.Controllers
                 var effortperday = _dbContext.Efforts.Where(e => e.Assign_Task.user_id == userId && e.date_time.ToString() == targetDate).ToList();
                 if (effortperday.Count() > 0)
                 {
-                    TempData["SuccessMessage"] = "You cannot submit for leave today because you submitted effort today";
+                    TempData["ErrorMessage"] = "You cannot submit for leave today because you submitted effort today";
                     return RedirectToAction("Index");
                 }
 
                 var leaveperday = _dbContext.Leaves.Where(e => e.user_id == userId && e.date.ToString() == targetDate).ToList();
                 if (leaveperday.Count() > 0)
                 {
-                    TempData["SuccessMessage"] = "You cannot submit for leave today because you already submitted one";
+                    TempData["ErrorMessage"] = "You cannot submit for leave today because you already submitted one";
                     return RedirectToAction("Index");
                 }
 
@@ -125,7 +199,5 @@ namespace Effort_Tracking_System.Controllers
                 return RedirectToAction("Index");
             }
         }
-
-        
     }
 }

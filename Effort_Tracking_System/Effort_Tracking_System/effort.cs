@@ -12,18 +12,24 @@ namespace Effort_Tracking_System
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.Xml.Linq;
 
     public partial class Effort
     {
         public int effort_id { get; set; }
+
         [Required(ErrorMessage = "Assign Task ID is required.")]
         public Nullable<int> assign_task_id { get; set; }
 
-        [Required(ErrorMessage = "Hours Worked is required.")]
-        [Range(0, int.MaxValue, ErrorMessage = "Hours worked must be a non-negative value.")]
+        [Required(ErrorMessage = "Shift ID is required.")]
+        public Nullable<int> shift_id { get; set; }
+
+        [Required(ErrorMessage = "Hours worked is required.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Hours worked must be a positive value.")]
         public int hours_worked { get; set; }
 
-        [Required(ErrorMessage = "Date Time is required.")]
+        [Required(ErrorMessage = "Date and time is required.")]
+        [Display(Name = "Date and Time")]
         public Nullable<System.DateTime> date_time { get; set; }
 
         [Required(ErrorMessage = "Status is required.")]
@@ -31,5 +37,6 @@ namespace Effort_Tracking_System
         public string status { get; set; }
 
         public virtual Assign_Task Assign_Task { get; set; }
+        public virtual Shift Shift { get; set; }
     }
 }

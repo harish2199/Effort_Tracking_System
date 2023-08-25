@@ -59,7 +59,7 @@
                                 @foreach (var report in ViewBag.PreviousReports)
                                 {
                                     <tr>
-                                        <td>@report.date_time</td>
+                                        <td>@report.date_time.ToString("yyyy-MM-dd")</td>
                                         <td>@report.Assign_Task.Project.name</td>
                                         <td>@report.Assign_Task.Task.task_name</td>
                                         <td>@report.Assign_Task.Shift.start_time-@report.Assign_Task.Shift.end_time</td>
@@ -88,5 +88,5 @@
             $(".alert").fadeTo(500, 0).slideUp(500, function () {
                 $(this).remove();
             });
-        }, 5000);
+        }, 1000);
 </script>

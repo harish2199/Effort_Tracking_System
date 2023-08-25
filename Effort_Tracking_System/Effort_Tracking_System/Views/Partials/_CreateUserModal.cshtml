@@ -6,36 +6,36 @@
 
 </head>
 
-<form action="/admin/UserAction" method="post">
+<form id="userForm" action="/admin/UserAction" method="post">
     <div class="container">
         <div class="row gx-3">
             <div class="col-md-6">
                 <div class="mb-3">
-                    <input type="text" class="form-control form-control-sm" name="first_name" placeholder="first name">
+                    <input type="text" class="form-control form-control-sm" name="first_name" placeholder="first name" required>
                     @Html.ValidationMessageFor(model => model.first_name, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="mb-3">
-                    <input type="text" class="form-control form-control-sm" name="last_name" placeholder="last name">
+                    <input type="text" class="form-control form-control-sm" name="last_name" placeholder="last name" required>
                     @Html.ValidationMessageFor(model => model.last_name, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="mb-3">
-                    <input type="text" class="form-control form-control-sm" name="designation" placeholder="designation">
+                    <input type="text" class="form-control form-control-sm" name="designation" placeholder="designation" required>
                     @Html.ValidationMessageFor(model => model.designation, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="mb-3">
-                    <input type="text" class="form-control form-control-sm" name="email" placeholder="email">
+                    <input type="text" class="form-control form-control-sm" name="email" placeholder="email" required>
                     @Html.ValidationMessageFor(model => model.email, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="mb-3">
-                    <input type="password" class="form-control form-control-sm" name="password" placeholder="password">
+                    <input type="password" class="form-control form-control-sm" name="password" placeholder="password" required>
                     @Html.ValidationMessageFor(model => model.password, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -46,7 +46,7 @@
             </div>
             <div class="col-md-2">
                 <div class="d-grid">
-                    <a href="#" class="btn btn-sm btn-primary" data-bs-dismiss="modal" aria-label="Close">Discard</a>
+                    <a href="#" class="btn btn-sm btn-primary" onclick="resetForm('userForm')" data-bs-dismiss="modal" aria-label="Close">Discard</a>
                 </div>
             </div>
         </div>

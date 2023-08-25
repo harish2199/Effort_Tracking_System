@@ -12,6 +12,14 @@
         </button>
     </div>
 }
+@if (ViewBag.SuccessMessage != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Information: </strong> @ViewBag.SuccessMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close">
+        </button>
+    </div>
+}
 
 <body>
     <div class="container">
@@ -22,15 +30,13 @@
                     <div class="card-body">
                         <form action="/home/Login" method="post">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="email" name="email" placeholder="John@gmail.com" autofocus >
+                                <input type="text" class="form-control" id="email" name="email" autofocus>
                                 @Html.ValidationMessageFor(model => model.email, "", new { @class = "text-danger" })
-
                                 <label for="email">Email</label>
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="password" class="form-control" id="pass_word" name="password" placeholder="******" >
+                                <input type="password" class="form-control" id="pass_word" name="password">
                                 @Html.ValidationMessageFor(model => model.password, "", new { @class = "text-danger" })
-
                                 <label for="pass_word">Password</label>
                             </div>
                             <div class="d-grid">
@@ -56,6 +62,6 @@
             $(".alert").fadeTo(500, 0).slideUp(500, function () {
                 $(this).remove();
             });
-        }, 5000);
+        }, 1000);
     </script>
 </body>

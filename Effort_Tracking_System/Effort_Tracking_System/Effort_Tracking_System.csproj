@@ -177,6 +177,9 @@
     <Compile Include="Shift.cs">
       <DependentUpon>EffortModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Shift_Change.cs">
+      <DependentUpon>EffortModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Task.cs">
       <DependentUpon>EffortModel.tt</DependentUpon>
     </Compile>
@@ -220,13 +223,6 @@
     <Content Include="Scripts\bootstrap.esm.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <EntityDeploy Include="EffortModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>EffortModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="EffortModel.edmx.diagram">
-      <DependentUpon>EffortModel.edmx</DependentUpon>
-    </Content>
     <Content Include="Scripts\esm\popper-utils.js" />
     <Content Include="Scripts\esm\popper-utils.min.js" />
     <Content Include="Scripts\esm\popper.js" />
@@ -236,6 +232,13 @@
     <Content Include="Scripts\esm\popper.js.map" />
     <Content Include="Scripts\esm\popper-utils.min.js.map" />
     <Content Include="Scripts\esm\popper-utils.js.map" />
+    <EntityDeploy Include="EffortModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>EffortModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="EffortModel.edmx.diagram">
+      <DependentUpon>EffortModel.edmx</DependentUpon>
+    </Content>
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -329,10 +332,8 @@
     <Content Include="Views\Admin\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\Home\Login.cshtml" />
     <Content Include="Views\Dashboard\_ViewStart.cshtml" />
-    <Content Include="Views\Dashboard\Index.cshtml" />
     <Content Include="Views\Home\Unauthorized.cshtml" />
     <Content Include="Views\EffortTrack\_ViewStart.cshtml" />
     <Content Include="Views\Reports\_ViewStart.cshtml" />
@@ -351,10 +352,12 @@
     <Content Include="Scripts\popper.js.map" />
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
-    <Content Include="Views\Partials\_AssignTaskModel.cshtml" />
-    <Content Include="Views\Partials\_ApproveEffortsModel.cshtml" />
-    <Content Include="Views\Partials\_ApproveTimeOffsModel.cshtml" />
+    <Content Include="Views\Partials\_AssignTaskModal.cshtml" />
+    <Content Include="Views\Partials\_ApproveEffortsModal.cshtml" />
+    <Content Include="Views\Partials\_ApproveTimeOffsModal.cshtml" />
     <Content Include="Views\Partials\_UpdateUserModal.cshtml" />
+    <Content Include="Views\Admin\Index.cshtml" />
+    <Content Include="Views\Partials\_ApproveShiftChangeModal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

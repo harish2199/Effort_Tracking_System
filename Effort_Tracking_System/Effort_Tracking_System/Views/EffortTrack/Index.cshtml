@@ -5,6 +5,22 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@if (ViewBag.SuccessMessage != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Information: </strong> @ViewBag.SuccessMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close">
+        </button>
+    </div>
+}
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Information: </strong> @ViewBag.ErrorMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close">
+        </button>
+    </div>
+}
 <div class="container mt-4">
     <div class="row">
         <div class="col-md-6">
@@ -18,17 +34,23 @@
                         <form action="/EffortTrack/SubmitEffort" method="post">
                             <input type="hidden" id="assign_task_id" name="assign_task_id" value="@Model.assign_task_id"><br>
 
-                            <label for="project_name">Project Name:</label>
+                            <label for="project_name"><strong>Project Name:</strong></label>
                             <span>@Model.Project.name</span><br>
-                            
 
-                            <label for="task_name">Task Name:</label>
+                            <label for="task_name"><strong>Task Name:</strong></label>
                             <span>@Model.Task.task_name</span><br>
 
-                            <label for="shift_times">Shift:</label>
-                            <span>@Model.Shift.start_time - @Model.Shift.end_time</span><br>
+                            <div class="form-group mb-3">
+                                <label for="shift_times"><strong>Shift:</strong></label>
+                                <select name="shift_id" class="form-control">
+                                    @foreach (var shift in ViewBag.TemporaryShifts)
+                                    {
+                                        <option value="@shift.shift_id">@shift.shift_name (@shift.start_time - @shift.end_time)</option>
+                                    }
+                                </select>
+                            </div>
 
-                            <label for="hours_worked">Hours Worked:</label>
+                            <label for="hours_worked"><strong>Hours Worked:</strong></label>
                             <input type="number" id="hours_worked" name="hours_worked" required min="1" max="9"><br>
 
                             <input type="hidden" id="date_time" name="date_time" value="@DateTime.Now.ToString("yyyy-MM-dd")">
@@ -50,38 +72,48 @@
                     <label class="custom-checkbox">
                         <input type="checkbox" id="unavailabilityCheckbox"> check box for Leave
                     </label>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" id="shiftChangeCheckbox"> Check box for Shift Change
+                    </label>
                 </div>
                 <div class="card-body" id="unavailabilityForm" style="display: none;">
                     <form action="/EffortTrack/SubmitLeave" method="post">
-
                         <div class="form-group mb-3">
-                            <input type="hidden" id="user_id" name="user_id" value="@ViewBag.userid">
+                            <input type="hidden" id="user_id" name="user_id" value="@ViewBag.UserId ">
                             <label for="date"><strong>Date:</strong></label>
                             <input type="date" class="form-control" name="date" required>
                         </div>
-
-                        <div class="form-group mb-3">
-                            <label for="shift"><strong>Shift:</strong></label>
-                            <select class="form-control" name="shift_id" required>
-                                <option selected>Select shift</option>
-                                @foreach (var item in ViewBag.Shifts)
-                                {
-                                    <option value="@item.shift_id">@item.start_time - @item.end_time</option>
-                                }
-                            </select>
-                        </div>
-
                         <div class="form-group mb-3">
                             <label for="reason"><strong>Reason:</strong></label>
                             <textarea class="form-control" name="reason" required></textarea>
                         </div>
-
                         <input type="hidden" id="status" name="status" value="Pending">
-
                         <button class="btn btn-primary" type="submit">Submit</button>
                     </form>
                 </div>
-
+                <div class="card-body" id="shiftChangeForm" style="display: none;">
+                    <form action="/EffortTrack/SubmitShiftChange" method="post">
+                        <input type="hidden" name="user_id" value="@ViewBag.UserId" />
+                        <input type="hidden" name="assigned_shift_id" value="@Model.shift_id" />
+                        <div class="form-group mb-3">
+                            <label for="date"><strong>Date:</strong></label>
+                            <input type="date" class="form-control" name="date" required>
+                        </div>
+                        <label for="shift_times">Shift:</label>
+                        <select name="new_shift_id" class="form-control">
+                            @foreach (var shift in ViewBag.TemporaryShifts)
+                            {
+                                <option value="@shift.shift_id">@shift.shift_name (@shift.start_time - @shift.end_time)</option>
+                            }
+                        </select>
+                        <div class="form-group mb-3">
+                            <label for="reason"><strong>Reason:</strong></label>
+                            <textarea class="form-control" id="reason" name="reason" required></textarea>
+                        </div>
+                        <input type="hidden" name="status" value="Pending" />
+                        <button class="btn btn-primary" type="submit">Submit</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -90,24 +122,28 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const unavailabilityCheckbox = document.getElementById("unavailabilityCheckbox");
+        const shiftChangeCheckbox = document.getElementById("shiftChangeCheckbox");
         const unavailabilityForm = document.getElementById("unavailabilityForm");
+        const shiftChangeForm = document.getElementById("shiftChangeForm");
 
-        unavailabilityCheckbox.addEventListener("change", function () {
+
+
+        unavailabilityCheckbox.addEventListener("click", function () {
             unavailabilityForm.style.display = this.checked ? "block" : "none";
+        });
+
+
+
+        shiftChangeCheckbox.addEventListener("click", function () {
+            shiftChangeForm.style.display = this.checked ? "block" : "none";
         });
     });
 </script>
 
-@if (!string.IsNullOrEmpty(ViewBag.SuccessMessage))
-{
-    <script>
-            alert("@ViewBag.SuccessMessage");
-    </script>
-}
-
-@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
-{
-    <script>
-            alert("@ViewBag.ErrorMessage");
-    </script>
-}
+<script>
+    window.setTimeout(function () {
+        $(".alert").fadeTo(500, 0).slideUp(500, function () {
+            $(this).remove();
+        });
+    }, 1000);
+</script>

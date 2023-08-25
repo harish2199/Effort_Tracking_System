@@ -19,12 +19,8 @@ namespace Effort_Tracking_System.Controllers
             try
             {
                 ViewBag.LoginSuccess = TempData["LoginSuccessMessage"] as string;
-                int? userId = Session["UserId"] as int?;
-                if (userId == null)
-                {
-                    TempData["ErrorMessage"] = "User session information is missing or invalid.";
-                    return RedirectToAction("Error", "Home");
-                }
+                int userId = (int)Session["UserId"];
+                
                 // Checking if task completed or not
                 var assignedTask = _dbContext.Assign_Task
                     .Where(a => a.user_id == userId && a.Status == "Pending")
@@ -42,20 +38,17 @@ namespace Effort_Tracking_System.Controllers
                         _dbContext.SaveChanges();
                     }
                 }
-                
-                // Assigned Task
+
                 var task = _dbContext.Assign_Task
                     .Where(a => a.user_id == userId && a.Status == "Pending")
                     .OrderByDescending(a => a.assignmentdate)
                     .FirstOrDefault();
-
                 // Completed efforts
                 ViewBag.PreviousReports = _dbContext.Efforts
                     .Where(a => a.Assign_Task.user_id == userId && a.status == "Approved")
                     .OrderByDescending(a => a.date_time)
                     .Take(7)
                     .ToList();
-                //_log.Info("Dashboard");
                 //SendEmailToAdmin(userId);
                 return View(task);
             }
@@ -67,9 +60,8 @@ namespace Effort_Tracking_System.Controllers
             }
         }
 
-        /*private void SendEmailToAdmin(int? userId)
+        private void SendEmailToAdmin(int? userId)
         {
-            // Configure SMTP client
             SmtpClient smtpClient = new SmtpClient("smtp.gmail.com")
             {
                 Port = 587,
@@ -77,7 +69,6 @@ namespace Effort_Tracking_System.Controllers
                 EnableSsl = true
             };
 
-            // Create email message
             MailMessage mailMessage = new MailMessage
             {
                 From = new MailAddress("harishdasu18@gmail.com"),
@@ -85,10 +76,9 @@ namespace Effort_Tracking_System.Controllers
                 Body = $"A new effort has been submitted by user {userId}."
             };
 
-            mailMessage.To.Add("satyaharish18@gmail.com"); // Replace with admin's email address
+            mailMessage.To.Add("satyaharish18@gmail.com"); 
 
-            // Send the email
             smtpClient.Send(mailMessage);
-        }*/
+        }
     }
 }

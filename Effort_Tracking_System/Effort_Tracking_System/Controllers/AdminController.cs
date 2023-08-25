@@ -41,7 +41,7 @@ namespace Effort_Tracking_System.Controllers
                     u.password
                 }).ToList();
                 ViewBag.UserDetails = simplifiedUsers;
-
+                ViewBag.shiftChanges = _dbContext.Shift_Change.Where(e => e.status == "Pending").ToList();
                 return View();
             }
             catch (Exception ex)
@@ -110,7 +110,7 @@ namespace Effort_Tracking_System.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return PartialView("~/Views/Partials/_AssignTaskModel.cshtml", task);
+                    return PartialView("~/Views/Partials/_AssignTaskModal.cshtml", task);
                 }
 
                 var previousTask = _dbContext.Assign_Task.Where(t => t.user_id == task.user_id && t.Status == "Pending")
@@ -168,17 +168,40 @@ namespace Effort_Tracking_System.Controllers
                 var leave = _dbContext.Leaves.Find(leaveid);
                 if (leave != null && leave.status == "Pending")
                 {
-                    leave.status = action == "ApproveLeave" ? "Approved" : "Rejected";
+                    leave.status = action;
                     _dbContext.SaveChanges();
                 }
 
-                TempData["SuccessMessage"] = "Leave " + (action == "ApproveLeave" ? "Approved" : "Rejected");
+                TempData["SuccessMessage"] = "Leave " + action;
                 return RedirectToAction("Index", "Admin");
             }
             catch (Exception ex)
             {
                 _log.Error("An error occurred while processing leave.", ex);
                 TempData["ErrorMessage"] = $"An error occurred while processing leave.{ex}";
+                return RedirectToAction("Error", "Home");
+            }
+        }
+
+        [HttpPost]
+        public ActionResult ShiftChange(int shiftChangeId, string approvalStatus)
+        {
+            try
+            {
+                int userId = (int)Session["UserId"];
+                var shiftChange = _dbContext.Shift_Change.Find(shiftChangeId);
+                if (shiftChange != null && shiftChange.status == "Pending")
+                {
+                    shiftChange.status = approvalStatus; 
+                    _dbContext.SaveChanges();
+                }
+                TempData["SuccessMessage"] = $"Shift change {approvalStatus.ToLower()} successfully.";
+                return RedirectToAction("Index", "Admin");
+            }
+            catch (Exception ex)
+            {
+                _log.Error($"An error occurred while {approvalStatus.ToLower()} shift change.", ex);
+                TempData["ErrorMessage"] = $"An error occurred while {approvalStatus.ToLower()} shift change.";
                 return RedirectToAction("Error", "Home");
             }
         }

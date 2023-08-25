@@ -1,0 +1,47 @@
+﻿@model Effort_Tracking_System.Shift_Change
+<head>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<table class="table">
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Assigned Shift</th>
+            <th>New Shift</th>
+            <th>Date</th>
+            <th>Reason</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (ViewBag.shiftChanges != null)
+        {
+            foreach (var shiftChange in ViewBag.shiftChanges)
+            {
+                <tr>
+                    <td>@shiftChange.User.first_name @shiftChange.User.last_name</td>
+                    <td>
+                        @shiftChange.Shift.shift_name<br />
+                        (@shiftChange.Shift.start_time-@shiftChange.Shift.end_time)
+                    </td>
+                    <td>
+                        @shiftChange.Shift1.shift_name<br />
+                        (@shiftChange.Shift1.start_time-@shiftChange.Shift1.end_time)
+                     </td>
+                    <td>@shiftChange.date.ToString("yyyy-MM-dd")</td>
+                    <td>@shiftChange.reason</td>
+                    <td>
+                        <form action="/admin/ShiftChange?shiftChangeId=@shiftChange.shift_Change_id" method="post">
+                            <button type="submit" class="btn btn-success" name="approvalStatus" value="Approved">Approve</button>
+                            <button type="submit" class="btn btn-danger" name="approvalStatus" value="Rejected">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<script src="~/bundles/jquery"></script>
+<script src="~/bundles/bootstrap"></script>

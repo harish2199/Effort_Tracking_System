@@ -10,15 +10,13 @@ namespace Effort_Tracking_System.Attributes
     {
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
-            // Check if the user's session is authenticated
             return httpContext.Session["UserId"] != null &&
-                   httpContext.Session["UserRole"].ToString().ToLower() == "user";
+                   httpContext.Session["UserRole"].ToString() == "user";
         }
 
         protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)
         {
-            // Redirect to login page if unauthorized
-            filterContext.Result = new RedirectResult("~/Home/Unauthorized");
+            filterContext.Result = new RedirectResult("~/Home/Login");
         }
     }
 }

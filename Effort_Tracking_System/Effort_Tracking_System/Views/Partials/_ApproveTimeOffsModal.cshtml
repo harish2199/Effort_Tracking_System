@@ -1,0 +1,41 @@
+﻿@model Effort_Tracking_System.Leave
+
+<head>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Date</th>
+            <th>Reason</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (ViewBag.leaves != null)
+        {
+            foreach (var leave in ViewBag.leaves)
+            {
+                <tr>
+                    <td>@leave.User.first_name @leave.User.last_name</td>
+                    <td>@leave.date</td>
+                    @*<td>@leave.Shift.start_time-@leave.Shift.end_time</td>*@
+                    <td>@leave.reason</td>
+                    <td>
+                        <form action="/admin/ApproveLeave?leaveid=@leave.leave_id" method="post">
+                            <button type="submit" name="action" value="Approved" class="btn btn-success">Approve</button>
+                            <button type="submit" name="action" value="Rejected" class="btn btn-danger">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+<script src="~/bundles/jquery"></script>
+<script src="~/bundles/bootstrap"></script>

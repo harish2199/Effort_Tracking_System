@@ -34,6 +34,7 @@
           </Key>
           <Property Name="effort_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="assign_task_id" Type="int" />
+          <Property Name="shift_id" Type="int" />
           <Property Name="hours_worked" Type="int" Nullable="false" />
           <Property Name="date_time" Type="date" />
           <Property Name="status" Type="varchar" MaxLength="20" />
@@ -45,7 +46,6 @@
           <Property Name="leave_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="user_id" Type="int" />
           <Property Name="date" Type="date" Nullable="false" />
-          <Property Name="shift_id" Type="int" />
           <Property Name="reason" Type="varchar(max)" Nullable="false" />
           <Property Name="status" Type="varchar" MaxLength="20" Nullable="false" />
         </EntityType>
@@ -55,6 +55,18 @@
           </Key>
           <Property Name="project_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="name" Type="varchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Shift_Change">
+          <Key>
+            <PropertyRef Name="shift_Change_id" />
+          </Key>
+          <Property Name="shift_Change_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="user_id" Type="int" />
+          <Property Name="assigned_shift_id" Type="int" />
+          <Property Name="date" Type="date" Nullable="false" />
+          <Property Name="new_shift_id" Type="int" />
+          <Property Name="reason" Type="varchar(max)" Nullable="false" />
+          <Property Name="status" Type="varchar" MaxLength="20" />
         </EntityType>
         <EntityType Name="Shifts">
           <Key>
@@ -83,7 +95,7 @@
           <Property Name="email" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="password" Type="varchar" MaxLength="100" Nullable="false" />
         </EntityType>
-        <Association Name="FK__Assign_Ta__proje__0C50D423">
+        <Association Name="FK__Assign_Ta__proje__753864A1">
           <End Role="Project" Type="Self.Project" Multiplicity="0..1" />
           <End Role="Assign_Task" Type="Self.Assign_Task" Multiplicity="*" />
           <ReferentialConstraint>
@@ -95,7 +107,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Assign_Ta__shift__0E391C95">
+        <Association Name="FK__Assign_Ta__shift__7720AD13">
           <End Role="Shifts" Type="Self.Shifts" Multiplicity="0..1" />
           <End Role="Assign_Task" Type="Self.Assign_Task" Multiplicity="*" />
           <ReferentialConstraint>
@@ -107,7 +119,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Assign_Ta__task___0D44F85C">
+        <Association Name="FK__Assign_Ta__task___762C88DA">
           <End Role="Task" Type="Self.Task" Multiplicity="0..1" />
           <End Role="Assign_Task" Type="Self.Assign_Task" Multiplicity="*" />
           <ReferentialConstraint>
@@ -119,7 +131,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Assign_Ta__user___0B5CAFEA">
+        <Association Name="FK__Assign_Ta__user___74444068">
           <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
           <End Role="Assign_Task" Type="Self.Assign_Task" Multiplicity="*" />
           <ReferentialConstraint>
@@ -131,7 +143,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Effort__assign_t__41B8C09B">
+        <Association Name="FK__Effort__assign_t__0E04126B">
           <End Role="Assign_Task" Type="Self.Assign_Task" Multiplicity="0..1" />
           <End Role="Effort" Type="Self.Effort" Multiplicity="*" />
           <ReferentialConstraint>
@@ -143,19 +155,19 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Leave__shift_id__28ED12D1">
+        <Association Name="FK__Effort__shift_id__0EF836A4">
           <End Role="Shifts" Type="Self.Shifts" Multiplicity="0..1" />
-          <End Role="Leave" Type="Self.Leave" Multiplicity="*" />
+          <End Role="Effort" Type="Self.Effort" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Shifts">
               <PropertyRef Name="shift_id" />
             </Principal>
-            <Dependent Role="Leave">
+            <Dependent Role="Effort">
               <PropertyRef Name="shift_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Leave__user_id__27F8EE98">
+        <Association Name="FK__Leave__user_id__00AA174D">
           <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
           <End Role="Leave" Type="Self.Leave" Multiplicity="*" />
           <ReferentialConstraint>
@@ -167,42 +179,91 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__Shift_Cha__assig__1975C517">
+          <End Role="Shifts" Type="Self.Shifts" Multiplicity="0..1" />
+          <End Role="Shift_Change" Type="Self.Shift_Change" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Shifts">
+              <PropertyRef Name="shift_id" />
+            </Principal>
+            <Dependent Role="Shift_Change">
+              <PropertyRef Name="assigned_shift_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Shift_Cha__new_s__1A69E950">
+          <End Role="Shifts" Type="Self.Shifts" Multiplicity="0..1" />
+          <End Role="Shift_Change" Type="Self.Shift_Change" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Shifts">
+              <PropertyRef Name="shift_id" />
+            </Principal>
+            <Dependent Role="Shift_Change">
+              <PropertyRef Name="new_shift_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Shift_Cha__user___1881A0DE">
+          <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
+          <End Role="Shift_Change" Type="Self.Shift_Change" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="user_id" />
+            </Principal>
+            <Dependent Role="Shift_Change">
+              <PropertyRef Name="user_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="Effort_Tracking_SystemModelStoreContainer">
           <EntitySet Name="Admin" EntityType="Self.Admin" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Assign_Task" EntityType="Self.Assign_Task" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Effort" EntityType="Self.Effort" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Leave" EntityType="Self.Leave" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Project" EntityType="Self.Project" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Shift_Change" EntityType="Self.Shift_Change" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Shifts" EntityType="Self.Shifts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Task" EntityType="Self.Task" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK__Assign_Ta__proje__0C50D423" Association="Self.FK__Assign_Ta__proje__0C50D423">
+          <AssociationSet Name="FK__Assign_Ta__proje__753864A1" Association="Self.FK__Assign_Ta__proje__753864A1">
             <End Role="Project" EntitySet="Project" />
             <End Role="Assign_Task" EntitySet="Assign_Task" />
           </AssociationSet>
-          <AssociationSet Name="FK__Assign_Ta__shift__0E391C95" Association="Self.FK__Assign_Ta__shift__0E391C95">
+          <AssociationSet Name="FK__Assign_Ta__shift__7720AD13" Association="Self.FK__Assign_Ta__shift__7720AD13">
             <End Role="Shifts" EntitySet="Shifts" />
             <End Role="Assign_Task" EntitySet="Assign_Task" />
           </AssociationSet>
-          <AssociationSet Name="FK__Assign_Ta__task___0D44F85C" Association="Self.FK__Assign_Ta__task___0D44F85C">
+          <AssociationSet Name="FK__Assign_Ta__task___762C88DA" Association="Self.FK__Assign_Ta__task___762C88DA">
             <End Role="Task" EntitySet="Task" />
             <End Role="Assign_Task" EntitySet="Assign_Task" />
           </AssociationSet>
-          <AssociationSet Name="FK__Assign_Ta__user___0B5CAFEA" Association="Self.FK__Assign_Ta__user___0B5CAFEA">
+          <AssociationSet Name="FK__Assign_Ta__user___74444068" Association="Self.FK__Assign_Ta__user___74444068">
             <End Role="Users" EntitySet="Users" />
             <End Role="Assign_Task" EntitySet="Assign_Task" />
           </AssociationSet>
-          <AssociationSet Name="FK__Effort__assign_t__41B8C09B" Association="Self.FK__Effort__assign_t__41B8C09B">
+          <AssociationSet Name="FK__Effort__assign_t__0E04126B" Association="Self.FK__Effort__assign_t__0E04126B">
             <End Role="Assign_Task" EntitySet="Assign_Task" />
             <End Role="Effort" EntitySet="Effort" />
           </AssociationSet>
-          <AssociationSet Name="FK__Leave__shift_id__28ED12D1" Association="Self.FK__Leave__shift_id__28ED12D1">
+          <AssociationSet Name="FK__Effort__shift_id__0EF836A4" Association="Self.FK__Effort__shift_id__0EF836A4">
             <End Role="Shifts" EntitySet="Shifts" />
-            <End Role="Leave" EntitySet="Leave" />
+            <End Role="Effort" EntitySet="Effort" />
           </AssociationSet>
-          <AssociationSet Name="FK__Leave__user_id__27F8EE98" Association="Self.FK__Leave__user_id__27F8EE98">
+          <AssociationSet Name="FK__Leave__user_id__00AA174D" Association="Self.FK__Leave__user_id__00AA174D">
             <End Role="Users" EntitySet="Users" />
             <End Role="Leave" EntitySet="Leave" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Shift_Cha__assig__1975C517" Association="Self.FK__Shift_Cha__assig__1975C517">
+            <End Role="Shifts" EntitySet="Shifts" />
+            <End Role="Shift_Change" EntitySet="Shift_Change" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Shift_Cha__new_s__1A69E950" Association="Self.FK__Shift_Cha__new_s__1A69E950">
+            <End Role="Shifts" EntitySet="Shifts" />
+            <End Role="Shift_Change" EntitySet="Shift_Change" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Shift_Cha__user___1881A0DE" Association="Self.FK__Shift_Cha__user___1881A0DE">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Shift_Change" EntitySet="Shift_Change" />
           </AssociationSet>
         </EntityContainer>
       </Schema>
@@ -232,11 +293,11 @@
           <Property Name="allocated_hours" Type="Int32" Nullable="false" />
           <Property Name="assignmentdate" Type="DateTime" Precision="0" />
           <Property Name="Status" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Project" Relationship="Self.FK__Assign_Ta__proje__0C50D423" FromRole="Assign_Task" ToRole="Project" />
-          <NavigationProperty Name="Shift" Relationship="Self.FK__Assign_Ta__shift__0E391C95" FromRole="Assign_Task" ToRole="Shifts" />
-          <NavigationProperty Name="Task" Relationship="Self.FK__Assign_Ta__task___0D44F85C" FromRole="Assign_Task" ToRole="Task" />
-          <NavigationProperty Name="User" Relationship="Self.FK__Assign_Ta__user___0B5CAFEA" FromRole="Assign_Task" ToRole="Users" />
-          <NavigationProperty Name="Efforts" Relationship="Self.FK__Effort__assign_t__41B8C09B" FromRole="Assign_Task" ToRole="Effort" />
+          <NavigationProperty Name="Project" Relationship="Self.FK__Assign_Ta__proje__753864A1" FromRole="Assign_Task" ToRole="Project" />
+          <NavigationProperty Name="Shift" Relationship="Self.FK__Assign_Ta__shift__7720AD13" FromRole="Assign_Task" ToRole="Shifts" />
+          <NavigationProperty Name="Task" Relationship="Self.FK__Assign_Ta__task___762C88DA" FromRole="Assign_Task" ToRole="Task" />
+          <NavigationProperty Name="User" Relationship="Self.FK__Assign_Ta__user___74444068" FromRole="Assign_Task" ToRole="Users" />
+          <NavigationProperty Name="Efforts" Relationship="Self.FK__Effort__assign_t__0E04126B" FromRole="Assign_Task" ToRole="Effort" />
         </EntityType>
         <EntityType Name="Effort">
           <Key>
@@ -244,10 +305,12 @@
           </Key>
           <Property Name="effort_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="assign_task_id" Type="Int32" />
+          <Property Name="shift_id" Type="Int32" />
           <Property Name="hours_worked" Type="Int32" Nullable="false" />
           <Property Name="date_time" Type="DateTime" Precision="0" />
           <Property Name="status" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Assign_Task" Relationship="Self.FK__Effort__assign_t__41B8C09B" FromRole="Effort" ToRole="Assign_Task" />
+          <NavigationProperty Name="Assign_Task" Relationship="Self.FK__Effort__assign_t__0E04126B" FromRole="Effort" ToRole="Assign_Task" />
+          <NavigationProperty Name="Shift" Relationship="Self.FK__Effort__shift_id__0EF836A4" FromRole="Effort" ToRole="Shifts" />
         </EntityType>
         <EntityType Name="Leave">
           <Key>
@@ -256,11 +319,9 @@
           <Property Name="leave_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="user_id" Type="Int32" />
           <Property Name="date" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="shift_id" Type="Int32" />
           <Property Name="reason" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="status" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
-          <NavigationProperty Name="Shift" Relationship="Self.FK__Leave__shift_id__28ED12D1" FromRole="Leave" ToRole="Shifts" />
-          <NavigationProperty Name="User" Relationship="Self.FK__Leave__user_id__27F8EE98" FromRole="Leave" ToRole="Users" />
+          <NavigationProperty Name="User" Relationship="Self.FK__Leave__user_id__00AA174D" FromRole="Leave" ToRole="Users" />
         </EntityType>
         <EntityType Name="Project">
           <Key>
@@ -268,7 +329,22 @@
           </Key>
           <Property Name="project_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-          <NavigationProperty Name="Assign_Task" Relationship="Self.FK__Assign_Ta__proje__0C50D423" FromRole="Project" ToRole="Assign_Task" />
+          <NavigationProperty Name="Assign_Task" Relationship="Self.FK__Assign_Ta__proje__753864A1" FromRole="Project" ToRole="Assign_Task" />
+        </EntityType>
+        <EntityType Name="Shift_Change">
+          <Key>
+            <PropertyRef Name="shift_Change_id" />
+          </Key>
+          <Property Name="shift_Change_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="user_id" Type="Int32" />
+          <Property Name="assigned_shift_id" Type="Int32" />
+          <Property Name="date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="new_shift_id" Type="Int32" />
+          <Property Name="reason" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="status" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Shift" Relationship="Self.FK__Shift_Cha__assig__1975C517" FromRole="Shift_Change" ToRole="Shifts" />
+          <NavigationProperty Name="Shift1" Relationship="Self.FK__Shift_Cha__new_s__1A69E950" FromRole="Shift_Change" ToRole="Shifts" />
+          <NavigationProperty Name="User" Relationship="Self.FK__Shift_Cha__user___1881A0DE" FromRole="Shift_Change" ToRole="Users" />
         </EntityType>
         <EntityType Name="Shift">
           <Key>
@@ -278,8 +354,10 @@
           <Property Name="shift_name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="start_time" Type="Time" Nullable="false" Precision="7" />
           <Property Name="end_time" Type="Time" Nullable="false" Precision="7" />
-          <NavigationProperty Name="Assign_Task" Relationship="Self.FK__Assign_Ta__shift__0E391C95" FromRole="Shifts" ToRole="Assign_Task" />
-          <NavigationProperty Name="Leaves" Relationship="Self.FK__Leave__shift_id__28ED12D1" FromRole="Shifts" ToRole="Leave" />
+          <NavigationProperty Name="Assign_Task" Relationship="Self.FK__Assign_Ta__shift__7720AD13" FromRole="Shifts" ToRole="Assign_Task" />
+          <NavigationProperty Name="Efforts" Relationship="Self.FK__Effort__shift_id__0EF836A4" FromRole="Shifts" ToRole="Effort" />
+          <NavigationProperty Name="Shift_Change" Relationship="Self.FK__Shift_Cha__assig__1975C517" FromRole="Shifts" ToRole="Shift_Change" />
+          <NavigationProperty Name="Shift_Change1" Relationship="Self.FK__Shift_Cha__new_s__1A69E950" FromRole="Shifts" ToRole="Shift_Change" />
         </EntityType>
         <EntityType Name="Task">
           <Key>
@@ -287,7 +365,7 @@
           </Key>
           <Property Name="task_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="task_name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <NavigationProperty Name="Assign_Task" Relationship="Self.FK__Assign_Ta__task___0D44F85C" FromRole="Task" ToRole="Assign_Task" />
+          <NavigationProperty Name="Assign_Task" Relationship="Self.FK__Assign_Ta__task___762C88DA" FromRole="Task" ToRole="Assign_Task" />
         </EntityType>
         <EntityType Name="User">
           <Key>
@@ -299,10 +377,11 @@
           <Property Name="designation" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="password" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-          <NavigationProperty Name="Assign_Task" Relationship="Self.FK__Assign_Ta__user___0B5CAFEA" FromRole="Users" ToRole="Assign_Task" />
-          <NavigationProperty Name="Leaves" Relationship="Self.FK__Leave__user_id__27F8EE98" FromRole="Users" ToRole="Leave" />
+          <NavigationProperty Name="Assign_Task" Relationship="Self.FK__Assign_Ta__user___74444068" FromRole="Users" ToRole="Assign_Task" />
+          <NavigationProperty Name="Leaves" Relationship="Self.FK__Leave__user_id__00AA174D" FromRole="Users" ToRole="Leave" />
+          <NavigationProperty Name="Shift_Change" Relationship="Self.FK__Shift_Cha__user___1881A0DE" FromRole="Users" ToRole="Shift_Change" />
         </EntityType>
-        <Association Name="FK__Assign_Ta__proje__0C50D423">
+        <Association Name="FK__Assign_Ta__proje__753864A1">
           <End Role="Project" Type="Self.Project" Multiplicity="0..1" />
           <End Role="Assign_Task" Type="Self.Assign_Task" Multiplicity="*" />
           <ReferentialConstraint>
@@ -314,7 +393,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Assign_Ta__shift__0E391C95">
+        <Association Name="FK__Assign_Ta__shift__7720AD13">
           <End Role="Shifts" Type="Self.Shift" Multiplicity="0..1" />
           <End Role="Assign_Task" Type="Self.Assign_Task" Multiplicity="*" />
           <ReferentialConstraint>
@@ -326,7 +405,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Assign_Ta__task___0D44F85C">
+        <Association Name="FK__Assign_Ta__task___762C88DA">
           <End Role="Task" Type="Self.Task" Multiplicity="0..1" />
           <End Role="Assign_Task" Type="Self.Assign_Task" Multiplicity="*" />
           <ReferentialConstraint>
@@ -338,7 +417,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Assign_Ta__user___0B5CAFEA">
+        <Association Name="FK__Assign_Ta__user___74444068">
           <End Role="Users" Type="Self.User" Multiplicity="0..1" />
           <End Role="Assign_Task" Type="Self.Assign_Task" Multiplicity="*" />
           <ReferentialConstraint>
@@ -350,7 +429,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Effort__assign_t__41B8C09B">
+        <Association Name="FK__Effort__assign_t__0E04126B">
           <End Role="Assign_Task" Type="Self.Assign_Task" Multiplicity="0..1" />
           <End Role="Effort" Type="Self.Effort" Multiplicity="*" />
           <ReferentialConstraint>
@@ -362,19 +441,19 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Leave__shift_id__28ED12D1">
+        <Association Name="FK__Effort__shift_id__0EF836A4">
           <End Role="Shifts" Type="Self.Shift" Multiplicity="0..1" />
-          <End Role="Leave" Type="Self.Leave" Multiplicity="*" />
+          <End Role="Effort" Type="Self.Effort" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Shifts">
               <PropertyRef Name="shift_id" />
             </Principal>
-            <Dependent Role="Leave">
+            <Dependent Role="Effort">
               <PropertyRef Name="shift_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Leave__user_id__27F8EE98">
+        <Association Name="FK__Leave__user_id__00AA174D">
           <End Role="Users" Type="Self.User" Multiplicity="0..1" />
           <End Role="Leave" Type="Self.Leave" Multiplicity="*" />
           <ReferentialConstraint>
@@ -386,42 +465,91 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__Shift_Cha__assig__1975C517">
+          <End Role="Shifts" Type="Self.Shift" Multiplicity="0..1" />
+          <End Role="Shift_Change" Type="Self.Shift_Change" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Shifts">
+              <PropertyRef Name="shift_id" />
+            </Principal>
+            <Dependent Role="Shift_Change">
+              <PropertyRef Name="assigned_shift_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Shift_Cha__new_s__1A69E950">
+          <End Role="Shifts" Type="Self.Shift" Multiplicity="0..1" />
+          <End Role="Shift_Change" Type="Self.Shift_Change" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Shifts">
+              <PropertyRef Name="shift_id" />
+            </Principal>
+            <Dependent Role="Shift_Change">
+              <PropertyRef Name="new_shift_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Shift_Cha__user___1881A0DE">
+          <End Role="Users" Type="Self.User" Multiplicity="0..1" />
+          <End Role="Shift_Change" Type="Self.Shift_Change" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="user_id" />
+            </Principal>
+            <Dependent Role="Shift_Change">
+              <PropertyRef Name="user_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="Effort_Tracking_SystemEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Admins" EntityType="Self.Admin" />
           <EntitySet Name="Assign_Task" EntityType="Self.Assign_Task" />
           <EntitySet Name="Efforts" EntityType="Self.Effort" />
           <EntitySet Name="Leaves" EntityType="Self.Leave" />
           <EntitySet Name="Projects" EntityType="Self.Project" />
+          <EntitySet Name="Shift_Change" EntityType="Self.Shift_Change" />
           <EntitySet Name="Shifts" EntityType="Self.Shift" />
           <EntitySet Name="Tasks" EntityType="Self.Task" />
           <EntitySet Name="Users" EntityType="Self.User" />
-          <AssociationSet Name="FK__Assign_Ta__proje__0C50D423" Association="Self.FK__Assign_Ta__proje__0C50D423">
+          <AssociationSet Name="FK__Assign_Ta__proje__753864A1" Association="Self.FK__Assign_Ta__proje__753864A1">
             <End Role="Project" EntitySet="Projects" />
             <End Role="Assign_Task" EntitySet="Assign_Task" />
           </AssociationSet>
-          <AssociationSet Name="FK__Assign_Ta__shift__0E391C95" Association="Self.FK__Assign_Ta__shift__0E391C95">
+          <AssociationSet Name="FK__Assign_Ta__shift__7720AD13" Association="Self.FK__Assign_Ta__shift__7720AD13">
             <End Role="Shifts" EntitySet="Shifts" />
             <End Role="Assign_Task" EntitySet="Assign_Task" />
           </AssociationSet>
-          <AssociationSet Name="FK__Assign_Ta__task___0D44F85C" Association="Self.FK__Assign_Ta__task___0D44F85C">
+          <AssociationSet Name="FK__Assign_Ta__task___762C88DA" Association="Self.FK__Assign_Ta__task___762C88DA">
             <End Role="Task" EntitySet="Tasks" />
             <End Role="Assign_Task" EntitySet="Assign_Task" />
           </AssociationSet>
-          <AssociationSet Name="FK__Assign_Ta__user___0B5CAFEA" Association="Self.FK__Assign_Ta__user___0B5CAFEA">
+          <AssociationSet Name="FK__Assign_Ta__user___74444068" Association="Self.FK__Assign_Ta__user___74444068">
             <End Role="Users" EntitySet="Users" />
             <End Role="Assign_Task" EntitySet="Assign_Task" />
           </AssociationSet>
-          <AssociationSet Name="FK__Effort__assign_t__41B8C09B" Association="Self.FK__Effort__assign_t__41B8C09B">
+          <AssociationSet Name="FK__Effort__assign_t__0E04126B" Association="Self.FK__Effort__assign_t__0E04126B">
             <End Role="Assign_Task" EntitySet="Assign_Task" />
             <End Role="Effort" EntitySet="Efforts" />
           </AssociationSet>
-          <AssociationSet Name="FK__Leave__shift_id__28ED12D1" Association="Self.FK__Leave__shift_id__28ED12D1">
+          <AssociationSet Name="FK__Effort__shift_id__0EF836A4" Association="Self.FK__Effort__shift_id__0EF836A4">
             <End Role="Shifts" EntitySet="Shifts" />
-            <End Role="Leave" EntitySet="Leaves" />
+            <End Role="Effort" EntitySet="Efforts" />
           </AssociationSet>
-          <AssociationSet Name="FK__Leave__user_id__27F8EE98" Association="Self.FK__Leave__user_id__27F8EE98">
+          <AssociationSet Name="FK__Leave__user_id__00AA174D" Association="Self.FK__Leave__user_id__00AA174D">
             <End Role="Users" EntitySet="Users" />
             <End Role="Leave" EntitySet="Leaves" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Shift_Cha__assig__1975C517" Association="Self.FK__Shift_Cha__assig__1975C517">
+            <End Role="Shifts" EntitySet="Shifts" />
+            <End Role="Shift_Change" EntitySet="Shift_Change" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Shift_Cha__new_s__1A69E950" Association="Self.FK__Shift_Cha__new_s__1A69E950">
+            <End Role="Shifts" EntitySet="Shifts" />
+            <End Role="Shift_Change" EntitySet="Shift_Change" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Shift_Cha__user___1881A0DE" Association="Self.FK__Shift_Cha__user___1881A0DE">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Shift_Change" EntitySet="Shift_Change" />
           </AssociationSet>
         </EntityContainer>
       </Schema>
@@ -460,6 +588,7 @@
               <MappingFragment StoreEntitySet="Effort">
                 <ScalarProperty Name="effort_id" ColumnName="effort_id" />
                 <ScalarProperty Name="assign_task_id" ColumnName="assign_task_id" />
+                <ScalarProperty Name="shift_id" ColumnName="shift_id" />
                 <ScalarProperty Name="hours_worked" ColumnName="hours_worked" />
                 <ScalarProperty Name="date_time" ColumnName="date_time" />
                 <ScalarProperty Name="status" ColumnName="status" />
@@ -472,7 +601,6 @@
                 <ScalarProperty Name="leave_id" ColumnName="leave_id" />
                 <ScalarProperty Name="user_id" ColumnName="user_id" />
                 <ScalarProperty Name="date" ColumnName="date" />
-                <ScalarProperty Name="shift_id" ColumnName="shift_id" />
                 <ScalarProperty Name="reason" ColumnName="reason" />
                 <ScalarProperty Name="status" ColumnName="status" />
               </MappingFragment>
@@ -483,6 +611,19 @@
               <MappingFragment StoreEntitySet="Project">
                 <ScalarProperty Name="project_id" ColumnName="project_id" />
                 <ScalarProperty Name="name" ColumnName="name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Shift_Change">
+            <EntityTypeMapping TypeName="Effort_Tracking_SystemModel.Shift_Change">
+              <MappingFragment StoreEntitySet="Shift_Change">
+                <ScalarProperty Name="shift_Change_id" ColumnName="shift_Change_id" />
+                <ScalarProperty Name="user_id" ColumnName="user_id" />
+                <ScalarProperty Name="assigned_shift_id" ColumnName="assigned_shift_id" />
+                <ScalarProperty Name="date" ColumnName="date" />
+                <ScalarProperty Name="new_shift_id" ColumnName="new_shift_id" />
+                <ScalarProperty Name="reason" ColumnName="reason" />
+                <ScalarProperty Name="status" ColumnName="status" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

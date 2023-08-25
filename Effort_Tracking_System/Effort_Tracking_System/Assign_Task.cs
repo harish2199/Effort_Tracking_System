@@ -34,11 +34,12 @@ namespace Effort_Tracking_System
         [Required(ErrorMessage = "Shift ID is required.")]
         public Nullable<int> shift_id { get; set; }
 
-        [Required(ErrorMessage = "Allocated Hours is required.")]
+        [Required(ErrorMessage = "Allocated hours is required.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Allocated hours must be a positive value.")]
         public int allocated_hours { get; set; }
 
-        [Required(ErrorMessage = "Assignment Date is required.")]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [Required(ErrorMessage = "Assignment date is required.")]
+        [Display(Name = "Assignment Date")]
         public Nullable<System.DateTime> assignmentdate { get; set; }
 
         [Required(ErrorMessage = "Status is required.")]
